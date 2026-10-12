@@ -1,0 +1,16 @@
+// FETCH API
+document.addEventListener("DOMContentLoaded",function(){
+ const content=document.getElementById("compare-content"),empty=document.getElementById("compare-empty");let bikes=[];
+ fetch("data/motorcycles.json").then(function(r){if(!r.ok)throw new Error("Could not load motorcycle data");return r.json();}).then(function(data){bikes=data;const valid=getCompareSelection().filter(function(id,index,arr){return data.some(function(b){return b.id===id;})&&arr.indexOf(id)===index;}).slice(0,2);saveCompareSelection(valid);render();}).catch(function(){empty.classList.remove("hidden");empty.innerHTML='<strong>Motorcycle data could not be loaded.</strong><p>Please open the website using VS Code Live Server and refresh.</p><a class="btn btn-red" href="motorcycles.html">Back to Motorcycles</a>';});
+ // SPECIFICATION FORMATTING
+ // SPECIFICATION FORMATTING
+ function value(v,suffix){if(v===null||v===undefined||v==="")return "Not specified";if(typeof v==="number"&&suffix)return String(v)+suffix;return String(v);}
+ function weightValue(b){if(typeof b.weight==="number")return b.weight+" kg"+(b.weightType?" ("+b.weightType+")":"");if(typeof b.weight==="string"&&b.weight.trim()!==""&&b.weight!=="Not specified")return b.weight+(b.weightType&&b.weightType!=="Not specified"?" ("+b.weightType+")":"");return "Not specified";}
+ // DYNAMIC CONTENT
+ // DYNAMIC CONTENT
+ function render(){const selected=getCompareSelection();if(selected.length!==2){content.innerHTML="";empty.classList.remove("hidden");return;}empty.classList.add("hidden");const pair=selected.map(function(id){return bikes.find(function(b){return b.id===id;});}).filter(Boolean);if(pair.length!==2){empty.classList.remove("hidden");return;}
+ const rows=[["Motorcycle Name",function(b){return b.name;}],["Category",function(b){return b.type;}],["Model Year / Release Year",function(b){return value(b.modelYear);}],["Price",function(b){return formatPrice(b.price);}],["Engine Displacement",function(b){return value(b.engineDisplacement," cc");}],["Engine Type/Configuration",function(b){return value(b.engineType);}],["Transmission",function(b){return value(b.transmission);}],["Weight",function(b){return weightValue(b);}],["Seat Height",function(b){return value(b.seatHeight," mm");}],["Fuel Capacity",function(b){return value(b.fuelCapacity);}],["Cooling System",function(b){return value(b.cooling);}]];
+ content.innerHTML=`<div class="compare-bike-heads">${pair.map(function(b){return `<article><div class="compare-bike-image"><img src="${b.image}" alt="${b.name} motorcycle image"></div><p class="card-category">${b.type}</p><h2>${b.name}</h2><p class="compare-price">${formatPrice(b.price)}</p><a class="btn btn-red" href="inquiry.html?motorcycle=${encodeURIComponent(b.id)}">Send Inquiry</a></article>`;}).join("")}</div><div class="comparison-table-wrap"><table class="comparison-table"><thead><tr><th>Specification</th><th>${pair[0].name}</th><th>${pair[1].name}</th></tr></thead><tbody>${rows.map(function(row){return `<tr><th scope="row">${row[0]}</th><td>${row[1](pair[0])}</td><td>${row[1](pair[1])}</td></tr>`;}).join("")}</tbody></table></div>`;
+ }
+ document.getElementById("compare-clear-page").addEventListener("click",function(){saveCompareSelection([]);render();});document.addEventListener("ridelineCompareChanged",render);
+});

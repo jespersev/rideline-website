@@ -46,6 +46,3 @@ RIDELINE is a responsive motorcycle showroom website where users can browse moto
 - `ridelineGarage` stores saved motorcycle IDs.
 - `ridelineCompare` stores up to two selected motorcycle IDs.
 - `data/motorcycles.json` contains the motorcycle catalog and specifications.
-
-## Project Documentation
-Include screenshots of each website page or major section in the project documentation and GitHub repository.
